@@ -1,0 +1,13 @@
+# Ignorar arquivos de dados brutos e pesados
+data/*.csv
+data/*.json
+.kagglehub/
+
+# Ignorar o Ambiente Virtual
+venv/
+env/
+.env
+
+# Ignorar arquivos temporários do Python
+__pycache__/
+*.pyc
