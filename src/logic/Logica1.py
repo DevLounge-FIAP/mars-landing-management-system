@@ -14,10 +14,6 @@ if localDePouso != True:
     print(f"{'Local de Pouso':<25} | {localDePouso:^10} | {'ALERTA!':^10}")
 else:
     print(f"{'Local de Pouso':<25} | {localDePouso:^10} | {'OK!':^10}")
-if vento > 30:
-    print(f"{'Vento':<25} | {vento:^10} | {'ALERTA!':^10}")
-else:
-    print(f"{'Vento':<25} | {vento:^10} | {'OK!':^10}")
 if integridadeDosMotores != True:
     print(f"{'Integridade dos Motores':<25} | {integridadeDosMotores:^10} | {'ALERTA!':^10}")
 else:
