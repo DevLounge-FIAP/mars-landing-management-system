@@ -5,7 +5,7 @@ massaDaNave = 21000
 
 
 # Tabela de Verificação de segurança
-print("=-=-=-=-=- VERIFICAÇÃO DE SEGURANÇA =-=-=-=-=-")
+print("=-=-=-=-=- VERIFICAÇÃO DE SEGURANÇA GERAL DOS MÓDULOS =-=-=-=-=-")
 if combustivel < 25:
     print(f"{'Combustível':<25} | {f'{combustivel} %':^10} | {'ALERTA!':^10}")
 else:
@@ -22,7 +22,7 @@ if massaDaNave < 21000:
     print(f"{'Massa da Nave':<25} | {f'{massaDaNave} Kg':^10} | {'ALERTA!':^10}")
 else:
     print(f"{'Massa da Nave':<25} | {f'{massaDaNave} Kg':^10} | {'OK!':^10}")
-print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
+print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
 
 # Sistema de autoização do Pouso de acordo com os parâmetros fornecidos
 if combustivel >= 25 and areaDePouso == True:
