@@ -1,6 +1,8 @@
 # Módulo de Gerenciamento de Pouso e Estabilização de Base (MGPEB)
 # Projeto: Missão Aurora Siger
 
+import random
+
 class Modulo:
     def __init__(self, id_nome, prioridade, combustivel, massa):
         self.id_nome = id_nome
@@ -8,7 +10,7 @@ class Modulo:
         self.combustivel = combustivel # Porcentagem (0 a 100)
         self.massa = massa
         self.pousado = False
-
+# Módulos definitos por Victor
 # 1. Inicialização do Cenário
 fila_aproximacao = [
     Modulo("MED-01", 1, 25, 4500),
@@ -21,29 +23,35 @@ fila_aproximacao = [
 lista_pousados = []
 lista_espera = []
 
-# Variáveis de Ambiente (Sensores da Base)
-vento_kmh = 45
-pista_livre = True
+def verificar_pista():
+    """Simula a leitura do radar para verificar se a pista está livre."""
+    print('--- CHECANDO RADAR ORBITAL ---')
+    return random.choice([True, False]) # Retorna True ou False aleatoriamente
 
 def verificar_seguranca(modulo, vento, pista):
     """Aplica a lógica de portas AND para autorizar o pouso."""
     c_ok = modulo.combustivel > 10
     w_ok = vento < 80
-    p_ok = pista # Fica implicito que é true
+    p_ok = pista
     
-    # Lógica If/Elif/Else
+    #Lógica implementada por Bruno
+    # Lógica If/Elif/Else   
     if c_ok and w_ok and p_ok:
         return True
     elif not c_ok:
         print(f"ALERTA: {modulo.id_nome} com combustível crítico ({modulo.combustivel}%).")
         return False
+    elif not p_ok:
+        print(f"ABORTAR: Pista obstruída detectada pelo radar para o módulo {modulo.id_nome}.")
+        return False
     else:
-        print(f"ABORTAR: Condições climáticas ou de pista inadequadas para {modulo.id_nome}.")
+        print(f"ABORTAR: Condições climáticas inadequadas para {modulo.id_nome}.")
         return False
 
 def buscar_menor_combustivel(fila):
     """Algoritmo de Busca Linear para encontrar a maior emergência."""
-    if not fila: return None
+    if not fila: 
+        return None
     
     modulo_critico = fila[0]
     for modulo in fila:
@@ -52,12 +60,19 @@ def buscar_menor_combustivel(fila):
     return modulo_critico
 
 def ordenar_por_prioridade(fila):
-    """Reorganiza a fila por prioridade usando a ordenação nativa do Python."""
-    # Prioridade 1 deve vir antes de prioridade 5
-    return sorted(fila, key=lambda modulo: modulo.prioridade)
+    """Algoritmo de ordenação Bubble Sort para reorganizar a fila por prioridade."""
+    n = len(fila)
+    for i in range(n):
+        for j in range(0, n-i-1):
+            if fila[j].prioridade > fila[j+1].prioridade:
+                fila[j], fila[j+1] = fila[j+1], fila[j]
+    return fila
 
 # 2. Execução da Simulação
 print("--- Iniciando Protocolo MGPEB ---")
+
+# Variáveis de Ambiente Globais
+vento_kmh = int(input('Digite a velocidade do vento registrada nos sensores (km/h): '))
 
 # Etapa A: Ordenar fila por prioridade antes de iniciar os pousos
 fila_aproximacao = ordenar_por_prioridade(fila_aproximacao)
@@ -69,7 +84,10 @@ while len(fila_aproximacao) > 0:
     
     print(f"\nSolicitação de pouso recebida: {modulo_atual.id_nome}")
     
-    autorizado = verificar_seguranca(modulo_atual, vento_kmh, pista_livre)
+    # O radar faz uma nova leitura para CADA módulo na fila
+    pista_livre_atual = verificar_pista() 
+    
+    autorizado = verificar_seguranca(modulo_atual, vento_kmh, pista_livre_atual)
     
     if autorizado:
         print(f">> Pouso autorizado e concluído: {modulo_atual.id_nome}")
