@@ -1,4 +1,4 @@
-# 🚀🧑‍astronauta Missão Aurora Siger — MGPEB
+# 🚀🧑‍🚀 Astronauta Missão Aurora Siger — MGPEB
 
 Olá tripulação, aqui é o Astronauta Victor G. Mantovani, responsável pela criação da estrutura e escolha dos dados.
 
