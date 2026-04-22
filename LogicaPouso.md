@@ -76,36 +76,33 @@ As condições de pouso são traduzidas em expressões booleanas da seguinte for
 ### Definição das Proposições
 
 ```
-P₁ = (A ≥ 50)      → Combustível suficiente
-P₂ = (B = True)    → Área de pouso disponível
-P₃ = (C > 3)       → Criticidade aceitável
-P₄ = (D ≥ 90.000)  → Massa dentro do limite ideal
+ (A ≥ 50)      → Combustível suficiente
+ (B = True)    → Área de pouso disponível
+ (C > 3)       → Criticidade aceitável
+ (D ≥ 90.000)  → Massa dentro do limite ideal
 
-P₅ = (A ≥ 25)      → Combustível mínimo
-P₆ = (C = 3)       → Criticidade no limite
-P₇ = (D < 90.000)  → Massa abaixo do ideal
+ (A ≥ 25)      → Combustível mínimo
+ (C = 3)       → Criticidade no limite
+ (D < 90.000)  → Massa abaixo do ideal
 ```
 
 ### Expressões Booleanas
 
 **✅ Pouso AUTORIZADO:**
 ```
-AUTORIZADO = P₁ AND P₂ AND P₃ AND P₄
-           = (A ≥ 50) AND (B = True) AND (C > 3) AND (D ≥ 90.000)
+AUTORIZADO = (A ≥ 50) AND (B = True) AND (C > 3) AND (D ≥ 90.000)
 ```
 
 **⚠️ Pouso AUTORIZADO COM RISCO:**
 ```
-RISCO = (P₅ OR P₆ OR P₇) AND P₂
-      = ((A ≥ 25) OR (C = 3) OR (D < 90.000)) AND (B = True)
+RISCO = ((A ≥ 25) OR (C = 3) OR (D < 90.000)) AND (B = True)
       E NOT AUTORIZADO
 ```
 
 **❌ Missão ABORTADA (pouso BLOQUEADO):**
 ```
-BLOQUEADO = NOT (AUTORIZADO OR RISCO)
-          = NOT P₂  (área indisponível é condição absoluta de bloqueio)
-          OR (NOT P₅ AND NOT P₆)  (combustível e criticidade ambos críticos)
+BLOQUEADO = (A < 25) OR (C < 3) OR (D < 70.000)) OR (B = False)
+
 ```
 
 ---
