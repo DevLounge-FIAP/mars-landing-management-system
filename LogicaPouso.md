@@ -119,7 +119,8 @@ Os diagramas abaixo representam visualmente como o sistema combina os sinais de 
 > 
 > **Expressão:** `(A · B) · (C · D)`
 
-![Diagrama Pouso Autorizado](diagrama_autorizado.png)
+<img width="1179" height="533" alt="image" src="https://github.com/user-attachments/assets/93d425a9-917b-41eb-b714-f55bda32e049" />
+
 
 ---
 
@@ -129,7 +130,8 @@ Os diagramas abaixo representam visualmente como o sistema combina os sinais de 
 > 
 > **Expressão:** `(A + C + D) · B`
 
-![Diagrama Pouso com Alerta](diagrama_risco.png)
+<img width="1179" height="581" alt="image" src="https://github.com/user-attachments/assets/37b584f6-d593-4840-8189-fb2d3ea4e7db" />
+
 
 ---
 
@@ -139,7 +141,8 @@ Os diagramas abaixo representam visualmente como o sistema combina os sinais de 
 > 
 > **Expressão:** `(A + C + D + NOT B)`
 
-![Diagrama Missão Abortada](diagrama_abortado.png)
+<img width="1179" height="525" alt="image" src="https://github.com/user-attachments/assets/ce538594-451f-404b-9b45-74bc8b0f0f48" />
+
 
 ---
 
