@@ -96,7 +96,7 @@ AUTORIZADO = (A ≥ 50) AND (B = True) AND (C > 3) AND (D ≥ 90.000)
 **⚠️ Pouso AUTORIZADO COM RISCO:**
 ```
 RISCO = ((A ≥ 25) OR (C = 3) OR (D < 90.000)) AND (B = True)
-      E NOT AUTORIZADO
+      AND NOT AUTORIZADO
 ```
 
 **❌ Missão ABORTADA (pouso BLOQUEADO):**
@@ -201,8 +201,10 @@ elif (A >= 25 or C == 3 or D < 90000) and B == True:
     print("\nPouso AUTORIZADO com RISCO!")
     if A >= 25:
         print(f"Combustivel da Nave: {A}%")
-    elif C == 3:
-        print(f"Criticidade da Nave: {C}")
+    if C == 3:
+        print(f"Criticidade da Nave: {C}")
+    if D < 90000:
+        print(f"Massa da Nave: {D} Kg")
 
 # Expressão: ABORTADO = NOT(AUTORIZADO OR RISCO)
 else:
@@ -225,7 +227,7 @@ Massa da Nave             | 90000 Kg  |    OK!
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 Pouso AUTORIZADO com RISCO!
-Combustivel da Nave: 25%
+Combustível da Nave: 25%
 ```
 
 ### Tabela de Casos de Teste
