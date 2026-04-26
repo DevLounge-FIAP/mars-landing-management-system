@@ -1,108 +1,156 @@
-# Módulo de Gerenciamento de Pouso e Estabilização de Base (MGPEB)
-# Projeto: Missão Aurora Siger
+"""
+MÓDULO DE GERENCIAMENTO DE POUSO E ESTABILIZAÇÃO DE BASE (MGPEB)
+Projeto: Missão Aurora Siger - FIAP
 
-import random
+Sistema embarcado de simulação logística e aproximação orbital para colonização marciana.
 
-class Modulo:
-    def __init__(self, id_nome, prioridade, combustivel, massa):
-        self.id_nome = id_nome
-        self.prioridade = prioridade  # 1 é a maior prioridade
-        self.combustivel = combustivel # Porcentagem (0 a 100)
-        self.massa = massa
-        self.pousado = False
-# Módulos definitos por Victor
-# 1. Inicialização do Cenário
-fila_aproximacao = [
-    Modulo("MED-01", 1, 25, 4500),
-    Modulo("ENG-02", 2, 40, 8000),
-    Modulo("HAB-03", 3, 30, 12000),
-    Modulo("LOG-04", 4, 12, 15000), # Combustível crítico
-    Modulo("LAB-05", 5, 50, 6000)
-]
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                          ATRIBUIÇÕES DO PROJETO                              ║
+╠═══════════════════════════════════════════════════════════════════════════════╣
+║ Modelagem do Cenário e Estruturas de Dados - Victor                          ║
+║   └─ data/modulos_dados.py: Definição dos 5 módulos                          ║
+║   └─ src/structures/modulo.py: Classe Modulo                                 ║
+║                                                                               ║
+║ Lógica de Decisão e Portas Lógicas - Bruno                                   ║
+║   └─ src/logic/logica_pouso.py: Algoritmos e decisão (AND, Bubble, Busca)   ║
+║                                                                               ║
+║ Engenharia de Software / Programação - Aelton                                ║
+║   └─ src/main.py: Orquestração (este arquivo)                               ║
+║   └─ tests/test_dados.py: Suite de testes                                    ║
+║   └─ Integração modular e deployment                                         ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
 
-lista_pousados = []
-lista_espera = []
+Execução:
+    python src/main.py
 
-def verificar_pista():
-    """Simula a leitura do radar para verificar se a pista está livre."""
-    print('--- CHECANDO RADAR ORBITAL ---')
-    return random.choice([True, False]) # Retorna True ou False aleatoriamente
+Testes:
+    python tests/test_dados.py
+"""
 
-def verificar_seguranca(modulo, vento, pista):
-    """Aplica a lógica de portas AND para autorizar o pouso."""
-    c_ok = modulo.combustivel > 10
-    w_ok = vento < 80
-    p_ok = pista
+import sys
+from pathlib import Path
+
+# Importações do projeto
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Victor: Banco de dados dos módulos (Modelagem do Cenário)
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from data.modulos_dados import MODULOS
+
+# Bruno: Lógica de Decisão (Portas Lógicas e Algoritmos)
+from src.logic import (
+    verificar_pista,
+    verificar_seguranca,
+    buscar_menor_combustivel,
+    ordenar_por_prioridade,
+    gerar_relatorio_seguranca
+)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PROGRAMA PRINCIPAL - Orquestração (Aelton)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def executar_simulacao():
+    """
+    Executa a simulação completa de pouso dos módulos.
     
-    #Lógica implementada por Bruno
-    # Lógica If/Elif/Else   
-    if c_ok and w_ok and p_ok:
-        return True
-    elif not c_ok:
-        print(f"ALERTA: {modulo.id_nome} com combustível crítico ({modulo.combustivel}%).")
-        return False
-    elif not p_ok:
-        print(f"ABORTAR: Pista obstruída detectada pelo radar para o módulo {modulo.id_nome}.")
-        return False
-    else:
-        print(f"ABORTAR: Condições climáticas inadequadas para {modulo.id_nome}.")
-        return False
-
-def buscar_menor_combustivel(fila):
-    """Algoritmo de Busca Linear para encontrar a maior emergência."""
-    if not fila: 
-        return None
+    Fluxo:
+    1. Recebe velocidade do vento como entrada
+    2. Ordena fila por prioridade (Bubble Sort)
+    3. Processa cada módulo em fila FIFO
+    4. Aplica lógica de segurança (portas AND)
+    5. Gerencia pousados vs espera
+    6. Identifica emergências
+    7. Gera relatório final
+    """
     
-    modulo_critico = fila[0]
-    for modulo in fila:
-        if modulo.combustivel < modulo_critico.combustivel:
-            modulo_critico = modulo
-    return modulo_critico
-
-def ordenar_por_prioridade(fila):
-    """Algoritmo de ordenação Bubble Sort para reorganizar a fila por prioridade."""
-    n = len(fila)
-    for i in range(n):
-        for j in range(0, n-i-1):
-            if fila[j].prioridade > fila[j+1].prioridade:
-                fila[j], fila[j+1] = fila[j+1], fila[j]
-    return fila
-
-# 2. Execução da Simulação
-print("--- Iniciando Protocolo MGPEB ---")
-
-# Variáveis de Ambiente Globais
-vento_kmh = int(input('Digite a velocidade do vento registrada nos sensores (km/h): '))
-
-# Etapa A: Ordenar fila por prioridade antes de iniciar os pousos
-fila_aproximacao = ordenar_por_prioridade(fila_aproximacao)
-
-# Etapa B: Processar Fila (FIFO)
-while len(fila_aproximacao) > 0:
-    # Pop(0) retira e retorna o primeiro elemento da lista (comportamento de Fila)
-    modulo_atual = fila_aproximacao.pop(0)
+    print("\n" + "=" * 70)
+    print("INICIANDO PROTOCOLO MGPEB - SIMULACAO DE POUSO".center(70))
+    print("=" * 70 + "\n")
     
-    print(f"\nSolicitação de pouso recebida: {modulo_atual.id_nome}")
+    # ─────────────────────────────────────────────────────────────────────────
+    # 1. ENTRADA DE DADOS
+    # ─────────────────────────────────────────────────────────────────────────
+    try:
+        vento_kmh = int(input('Digite a velocidade do vento registrada nos sensores (km/h): '))
+    except ValueError:
+        print("[!] Entrada invalida. Usando vento padrao: 50 km/h")
+        vento_kmh = 50
     
-    # O radar faz uma nova leitura para CADA módulo na fila
-    pista_livre_atual = verificar_pista() 
+    print(f"\n[Vento Marciano: {vento_kmh} km/h]")
+    print(f"[Modulos para processar: {len(MODULOS)}]")
     
-    autorizado = verificar_seguranca(modulo_atual, vento_kmh, pista_livre_atual)
+    # ─────────────────────────────────────────────────────────────────────────
+    # 2. INICIALIZAÇÃO - Cria cópia da fila (Victor: dados originais)
+    # ─────────────────────────────────────────────────────────────────────────
+    fila_aproximacao = list(MODULOS)
+    lista_pousados = []
+    lista_espera = []
     
-    if autorizado:
-        print(f">> Pouso autorizado e concluído: {modulo_atual.id_nome}")
-        modulo_atual.pousado = True
-        lista_pousados.append(modulo_atual)
-    else:
-        print(f">> Pouso negado. {modulo_atual.id_nome} enviado para lista de espera/alerta.")
-        lista_espera.append(modulo_atual)
+    # ─────────────────────────────────────────────────────────────────────────
+    # 3. ORDENAÇÃO - Bubble Sort por Prioridade (Bruno)
+    # ─────────────────────────────────────────────────────────────────────────
+    print("\n[*] Ordenando fila por prioridade (Bubble Sort)...")
+    fila_aproximacao = ordenar_por_prioridade(fila_aproximacao)
+    print("[OK] Fila ordenada")
+    
+    # ─────────────────────────────────────────────────────────────────────────
+    # 4. PROCESSAMENTO - FIFO (Aelton: orquestração)
+    # ─────────────────────────────────────────────────────────────────────────
+    print(f"\n{'=' * 70}")
+    print("PROCESSAMENTO DE FILAS (FIFO)".center(70))
+    print(f"{'=' * 70}\n")
+    
+    iteracao = 0
+    while len(fila_aproximacao) > 0:
+        iteracao += 1
+        
+        # Pop(0) implementa comportamento FIFO
+        modulo_atual = fila_aproximacao.pop(0)
+        
+        print(f"\n[{iteracao}/{len(MODULOS)}] Solicitacao de pouso: {modulo_atual.id_nome} "
+              f"({modulo_atual.tipo.upper()})")
+        print(f"     Combustivel: {modulo_atual.combustivel}% | "
+              f"Prioridade: {modulo_atual.prioridade} | "
+              f"Criticidade: {modulo_atual.criticidade}")
+        
+        # Bruno: Verifica pista
+        pista_livre_atual = verificar_pista()
+        
+        # Bruno: Aplica lógica de segurança (A = C ∧ W ∧ P)
+        autorizado = verificar_seguranca(modulo_atual, vento_kmh, pista_livre_atual)
+        
+        # Aelton: Registra resultado
+        if autorizado:
+            print("     [+] POUSO AUTORIZADO E CONCLUIDO")
+            modulo_atual.pousado = True
+            lista_pousados.append(modulo_atual)
+        else:
+            print("     [!] POUSO NEGADO - Redirecionado para lista de espera")
+            lista_espera.append(modulo_atual)
+    
+    # ─────────────────────────────────────────────────────────────────────────
+    # 5. BUSCA DE EMERGÊNCIA (Bruno: Busca Linear)
+    # ─────────────────────────────────────────────────────────────────────────
+    emergencia = buscar_menor_combustivel(lista_espera)
+    
+    # ─────────────────────────────────────────────────────────────────────────
+    # 6. RELATÓRIO FINAL
+    # ─────────────────────────────────────────────────────────────────────────
+    gerar_relatorio_seguranca(lista_pousados, lista_espera, emergencia)
 
-# Etapa C: Relatório Final
-print("\n--- Relatório Final de Pouso ---")
-print(f"Módulos Pousados de forma segura: {[m.id_nome for m in lista_pousados]}")
-print(f"Módulos em Espera/Alerta: {[m.id_nome for m in lista_espera]}")
 
-# Etapa D: Identificar emergência na lista de espera
-emergencia = buscar_menor_combustivel(lista_espera)
-if emergencia:
-    print(f"\nAÇÃO IMEDIATA NECESSÁRIA: {emergencia.id_nome} possui apenas {emergencia.combustivel}% de combustível.")
+# ─────────────────────────────────────────────────────────────────────────────
+# PONTO DE ENTRADA
+# ─────────────────────────────────────────────────────────────────────────────
+
+if __name__ == "__main__":
+    try:
+        executar_simulacao()
+    except KeyboardInterrupt:
+        print("\n\n[!] Simulacao interrompida pelo usuario.")
+    except Exception as e:
+        print(f"\n[ERRO] Erro durante simulacao: {e}")
+        import traceback
+        traceback.print_exc()
