@@ -9,7 +9,7 @@ Equação Booleana Principal:
     A = C ∧ W ∧ P
 
 Onde:
-    C = Combustível > 10% (Variável de Segurança)
+    C = Combustível >= 25% (Variável de Segurança)
     W = Vento < 80 km/h (Variável Ambiental)
     P = Pista Livre (Variável Orbital)
     A = Autorização de Pouso
@@ -43,7 +43,7 @@ def verificar_seguranca(modulo, vento_kmh, pista_livre):
     Implementa a equação booleana de segurança com três variáveis críticas:
     
     Condição de Autorização (AND lógico):
-        AUTORIZADO = (C > 10%) AND (W < 80 km/h) AND (P = True)
+        AUTORIZADO = (C >= 25%) AND (W < 80 km/h) AND (P = True)
     
     Se qualquer condição falhar, o pouso é negado e o módulo é redirecionado
     para lista de espera ou alerta de emergência.
@@ -57,12 +57,12 @@ def verificar_seguranca(modulo, vento_kmh, pista_livre):
         bool: True se todas as três condições são satisfeitas, False caso contrário
     
     Lógica:
-        - C_OK: Combustível do módulo > 10% (margem de segurança)
+        - C_OK: Combustível do módulo >= 25% (margem de segurança)
         - W_OK: Velocidade do vento < 80 km/h (limite de estabilidade)
         - P_OK: Pista detectada como livre pelo radar orbital
     """
     # Variáveis booleanas da condição
-    c_ok = modulo.combustivel > 10  # Combustível adequado
+    c_ok = modulo.combustivel >= 25  # Combustível adequado
     w_ok = vento_kmh < 80            # Clima favorável
     p_ok = pista_livre                # Pista desobstruída
     
